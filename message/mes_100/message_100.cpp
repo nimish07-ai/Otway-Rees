@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "../encryption_algorithm.h"
-#include "../message_helper.h"
+#include "../message_helper/message_helper.h"
+#include "../encryption_algorithm/encryption_algorithm.h"
+#include "../diffiehelman/diffiehelman.h"
+#include "message_100.h"
 
 std::pair<std::vector<std::string>, std::string> send_100(const std::string& senderip, const std::string& senderport, const std::string& receiverip, const std::string& receiverport) {
     std::pair<std::vector<std::string>, std::string> result;
@@ -29,7 +31,7 @@ std::pair<std::vector<std::string>, std::string> send_100(const std::string& sen
     return result;
 }
 
-std::pair<std::vector<std::string>,std::string> recv_100(const std::vector<std::string>& head, const std::vector<std::vector<std::string>>& body, const std::string& clientName, int keysize) {
+std::pair<std::vector<std::string>,std::string> recv_100(const std::vector<std::string>& head, const std::vector<std::vector<std::string>>& body) {
     std::pair<std::vector<std::string>,std::string > result;
 
     cout<<"recieived 100";
@@ -127,6 +129,13 @@ std::pair<std::vector<std::string>, std::string> send_103(const std::string& sen
 
     return result;
 }
+std::pair<std::vector<std::string>,std::string>  recv_103(const std::vector<std::string>& head, const std::vector<std::vector<std::string>>& body) {
+    std::pair< std::vector<std::string>,std::string> result;
+    
+    // result=send_103(head[2], head[3], head[0], head[1], clientName , body[1]);
+
+    return result;
+}
 
 std::pair<std::vector<std::string>, std::string> send_104(const std::string& senderip, const std::string& senderport, const std::string& receiverip, const std::string& receiverport,const std::string& name,const std::string& key,const std::string& num) {
      std::pair<std::vector<std::string>, std::string> result;
@@ -150,3 +159,46 @@ std::pair<std::vector<std::string>, std::string> send_104(const std::string& sen
     result.first = {senderip, senderport};
 
     return result;
+}
+std::pair<std::vector<std::string>,std::string>  recv_104(const std::vector<std::string>& head, const std::vector<std::vector<std::string>>& body) {
+    std::pair< std::vector<std::string>,std::string> result;
+    
+    // result=send_103(head[2], head[3], head[0], head[1], clientName , body[1]);
+
+    return result;
+}
+
+std::pair<std::vector<std::string>, std::string> processMessage_100s(std::vector<std::string>& header, std::vector<std::vector<std::string>>& body, int messageCode) {
+    std::string senderip = header[0];
+    std::string senderport = header[1];
+    std::string receiverip = header[2];
+    std::string receiverport = header[3];
+
+    // Call the appropriate send function based on the message code
+    if (messageCode == 100) {
+        // Call send_100
+        return recv_100(header, body);
+    } else if (messageCode == 101) {
+        // Call send_100
+        return recv_101(header, body);
+    }
+    
+     else if (messageCode == 102) {
+        // Call send_100
+        return recv_102(header, body);
+    } else if (messageCode == 103) {
+        // Call send_100
+        return recv_103(header, body);
+    } else if (messageCode == 104) {
+        // Call send_100
+        return recv_104(header, body);
+    } 
+    else {
+        // retuen 301
+        // Handle unknown message code
+        std::cerr << "Unknown message code: " << messageCode << std::endl;
+        // Return an empty pair
+        return std::make_pair(std::vector<std::string>(), "");
+    }
+}
+

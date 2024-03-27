@@ -2,11 +2,13 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "encryption_algorithm.h"
-#include "diffiehelman.h"
+#include "encryption_algorithm/encryption_algorithm.h"
+#include "diffiehelman/diffiehelman.h"
+#include "mes_100/message_100.h"
+#include "mes_200/message_200.h"
+#include "mes_300/message_300.h"
 
-
-std::pair<std::vector<std::string>, std::string> processMessage(const std::string& message,const std::string& clientName,const int keysize) {
+std::pair<std::vector<std::string>, std::string> processMessage(const std::string& message) {
     std::string result;
     std::vector<std::string> additionalData; // Vector to hold additional data
 
@@ -22,31 +24,23 @@ std::pair<std::vector<std::string>, std::string> processMessage(const std::strin
             messageCode = header[4][0]; // Accessing the first string of the 5th element as message code
             std::cout << "Received message with code: " << messageCode << std::endl;
 
-            // Call appropriate function based on message code
-            if (messageCode == "100") {
-                std::pair<std::vector<std::string>,std::string> recvResult = recv_100(header[0], body,clientName,keysize);
-                result = recvResult.second;
-                additionalData = recvResult.first;
+    int messageCode = std::stoi(messageCodeStr); // Convert message code to integer
+
+            std::cout << "Received message with code: " << messageCode << std::endl;
+
+            // Call appropriate function based on message code range
+            if (messageCode >= 100 && messageCode < 200) {
+                return processMessage_100s(header, body);
+            } else if (messageCode >= 200 && messageCode < 300) {
+                return processMessage_200s(header, body);
+            } else if (messageCode >= 300 && messageCode < 400) {
+                return processMessage_300s(header, body);
+            } else {
+                std::cerr << "Unknown message code: " << messageCode << std::endl;
             }
-            // else  if (messageCode == "0") {
-            //     std::pair<std::string, std::vector<std::string>> recvResult = recv_0(header, body);
-            //     result = recvResult.first;
-            //     additionalData = recvResult.second;
-            // }
-            //  else if (messageCode == "200") {
-            //     std::pair<std::string, std::vector<std::string>> recvResult = recv_200(header, body);
-            //     result = recvResult.first;
-            //     additionalData = recvResult.second;
-            // } else if (messageCode == "300") {
-            //     std::pair<std::string, std::vector<std::string>> recvResult = recv_300(header, body);
-            //     result = recvResult.first;
-            //     additionalData = recvResult.second;
-            // } else {
-            //     std::cerr << "Unknown message code: " << messageCode << std::endl;
-            // }
-        } else {
-            std::cerr << "Invalid message code in header" << std::endl;
-        }
+            } else {
+                std::cerr << "Invalid message code in header" << std::endl;
+            }
     } else {
         std::cerr << "Invalid header format" << std::endl;
     }

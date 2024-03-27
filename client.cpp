@@ -12,9 +12,12 @@
 #include <cstring>     // For memset, strlen
 #include <unistd.h>    // For close
 
-#include "Csocket.h" 
-#include "message.h"
-#include "displayFunctions.h"
+#include "gloabl.h"
+#include "Csocket/Csocket.h" 
+#include "message/main_message.h"
+#include "displayFunctions/displayFunctions.h"
+#include "logger/logger.h"
+
 std::string clientName;
 DisplayText myDisplayText;
 const int keysize=256;
@@ -25,7 +28,7 @@ void startServerCallback(const std::string& message, const std::string& clientAd
     std::cout << "Message: " << message << std::endl;
 
     // Process the received message
-    auto processedMessage = processMessage(message,clientName,keysize);
+    auto processedMessage = processMessage(message);
     std::vector<std::string> additionalData = processedMessage.first;
     std::string sMessage = processedMessage.second;
 
@@ -218,53 +221,6 @@ void menuDrivenCallback(int sock) {
             }
             // Establish SSK With KDC
             case 5:{break;}
-            // case 10: {
-            //     // Accept receiver's IP address and port
-            //     std::string receiverIP;
-            //     int receiverPort;
-
-            //     std::cout << "Enter receiver's IP address: ";
-            //     std::getline(std::cin, receiverIP);
-                
-            //     std::cout << "Enter receiver's port: ";
-            //     if (!(std::cin >> receiverPort)) {
-            //         std::cerr << "Error: Invalid input\n";
-            //         std::cin.clear();
-            //         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            //         break; // Exit the switch statement if input is invalid
-            //     }
-            //     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-            //     // Generate message body
-            //     std::vector<std::vector<std::string>> body;
-            //     body.push_back({GenerateGlobalParametersAndHalfKey(512)});
-            //     int keySize = TestKeySize;
-            //     std::string plainText = TestPlainText;
-            //     SecByteBlock key = GenerateAESKey(keySize);
-            //     body.push_back({SecByteBlockToString(key), plainText, Encrypt(plainText, key)});
-
-            //     // Concatenate header and body into a single string
-            //     std::vector<std::string> head = {serverIpAddress, std::to_string(serverPort), receiverIP, std::to_string(receiverPort), "0"}; // Assuming message code is 0 for this case
-            //     std::string concatenatedString = concatenateHeadAndBody(head, body);
-
-            //     // Send the concatenated message
-            //     // Create sockaddr_in for the receiver
-            //     struct sockaddr_in receiverAddr;
-            //     memset(&receiverAddr, 0, sizeof(receiverAddr));
-            //     receiverAddr.sin_family = AF_INET;
-            //     receiverAddr.sin_addr.s_addr = inet_addr(receiverIP.c_str());
-            //     receiverAddr.sin_port = htons(receiverPort);
-
-            //     // Send message to the receiver
-            //     if (sendMessage(sock, receiverAddr, concatenatedString.c_str()) == 1) {
-            //         std::cout << "Message sent successfully.\n";
-            //     } else {
-            //         std::cerr << "Failed to send message.\n";
-            //     }
-
-            //     break;
-            // }
-            // Exit           
             case 6:
                 return;
 
