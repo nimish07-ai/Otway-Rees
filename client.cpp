@@ -1,28 +1,5 @@
-#include <iostream>
-#include <string>
-#include <thread>
-#include <cstring>
-#include <unistd.h>
-#include <map>
-#include <mutex>       // For mutex
-#include <iostream>    // For std::cerr
-#include <string>      // For std::string
-#include <thread>      // For std::thread
-#include <arpa/inet.h> // For sockaddr_in, inet_addr, htons
-#include <cstring>     // For memset, strlen
-#include <unistd.h>    // For close
+#include "global/global.h"
 
-#include "gloabl.h"
-#include "Csocket/Csocket.h" 
-#include "message/main_message.h"
-#include "displayFunctions/displayFunctions.h"
-#include "logger/logger.h"
-
-std::string clientName;
-DisplayText myDisplayText;
-const int keysize=256;
-
-// Function to handle incoming messages from clients
 void startServerCallback(const std::string& message, const std::string& clientAddress, int sock) {
     std::cout << "Received message from client at address: " << clientAddress << "\n";
     std::cout << "Message: " << message << std::endl;
@@ -63,8 +40,9 @@ void menuDrivenCallback(int sock) {
 
 
         myDisplayText.body = "\nMenu:\nEnter Your Choice: \n0. Check Message Pool \n1. Add Client\n2. Establish Session Key With Client \n3. Send Message To Client \n4. Add New KDC\n5. Establish SSK With KDC\n";
-
+    
         refreshScreen(myDisplayText);
+    
         if (!(std::cin >> choice)) {
             refreshScreen(myDisplayText);   
             std::cerr << "Error: Invalid input\n";
@@ -77,141 +55,24 @@ void menuDrivenCallback(int sock) {
         switch (choice) {
             // Check Message Pool
            case 0: {
-            // Display all message orders according to timestamp, with the latest first
-            std::cout << "All messages in the pool:\n";
-            int index = 1;
-            for (auto it = Message_pool.rbegin(); it != Message_pool.rend(); ++it) {
-                const std::vector<std::string>& entry = it->second;
-                std::cout << index << ". " << it->first << " " << entry[0] << " " << entry[1] << std::endl;
-                index++;
-            }
-
-            // Allow the user to select a number corresponding to a message
-            int selectedMessage;
-            std::cout << "Select a message number to view details (0 to cancel): ";
-            std::cin >> selectedMessage;
-
-            if (selectedMessage == 0) {
-                break; // Exit the switch statement if the user cancels
-            } else {
-                // Display the entire message when the user selects a number
-                auto it = Message_pool.rbegin(); // Start from the latest message
-                std::advance(it, selectedMessage - 1); // Move to the selected message
-                const std::vector<std::string>& selectedEntry = it->second;
-                std::cout << "Selected message details:\n";
-                std::cout << "Timestamp: " << it->first << std::endl;
-                std::cout << "Name: " << selectedEntry[0] << std::endl;
-                std::cout << "Code: " << selectedEntry[1] << std::endl;
-                std::cout << "Message: " << selectedEntry[2] << std::endl;
-            }
-
-            // Wait for 'q' to be pressed to quit
-            char input;
-            std::cout << "Press 'q' to quit: ";
-            std::cin >> input;
-            
-            if (input == 'q') {
-                break; // Exit the switch statement if 'q' is pressed
-            }
+     
             break;
         }
 
 
-            // Add Client
-            case 1: {
-                myDisplayText.body = "in choice 1:";
-                refreshScreen(myDisplayText);   
-                std::string clientName;
-                std::string clientIP;
-                int clientPort;
-                
-                std::cout << "Enter client name: ";
-                std::getline(std::cin, clientName);
-                
-                std::cout << "Enter client IP address: ";
-                std::getline(std::cin, clientIP);
-                
-                std::cout << "Enter client port: ";
-                if (!(std::cin >> clientPort)) {
-                    std::cerr << "Error: Invalid input\n";
-                    std::cin.clear();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    break; // Exit the switch statement if input is invalid
-                }
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        // Add Client
+        case 1: {
+    
+            break;
+        }
 
-                // Ensure thread safety when accessing clientsMap
-                {
-                    addClientToMap(clientName, clientIP, clientPort);
-                }
-                break;
-            }
-
-            // Establish Session Key With Client
-            case 2: {
-                myDisplayText.body = "in choice 2:";
-                refreshScreen(myDisplayText);
-                std::cout << "Available clients:\n";
-                int i = 1;
-
-                // Ensure thread safety when accessing clientsMap
-                std::lock_guard<std::mutex> lock(clientsMapMutex);
-
-                for (const auto& client : clientsMap) {
-                    std::cout << i << ". " << client.first << std::endl;
-                    i++;
-                }
-
-                int clientIndex;
-                std::cout << "Select a client to establish ssk: ";
-                if (!(std::cin >> clientIndex)) {
-                    std::cerr << "Error: Invalid input\n";
-                    std::cin.clear();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    continue;
-                }
-                std::cin.ignore();
-
-                if (clientIndex <= clientsMap.size()) {
-                    std::string clientName = "";
-                    int j = 1;
-
-                    for (const auto& client : clientsMap) {
-                        if (j == clientIndex) {
-                            clientName = client.first;
-                            break;
-                        }
-                        j++;
-                    }
-
-                    if (clientName != "") {
-                        std::string sMessage;
-                        std::cout << "Enter message to send: ";
-                        std::getline(std::cin, sMessage);
-
-                        struct sockaddr_in clientAddr;
-                        memset(&clientAddr, 0, sizeof(clientAddr));
-                        clientAddr.sin_family = AF_INET;
-                        clientAddr.sin_addr.s_addr = inet_addr(clientsMap[clientName].first.c_str());
-                        // TODO: update this to 
-                        clientAddr.sin_port = htons(9134);
-
-                        // Send message to selected client
-                        if (sendMessage(sock, clientAddr, sMessage.c_str()) == 1) {
-                            std::cout << "Request sent successfully.\n";
-                        } else {
-                            std::cout << "Failed to send Request.\n";
-                        }
-                    } else {
-                        std::cout << "Invalid client selection.\n";
-                    }
-                } else {
-                    std::cout << "Invalid client selection.\n";
-                }
-                break;
-            }
+        // Establish Session Key With Client
+        case 2: {
+            
+            break;
+        }
            
-             // Send Message To Client 
+                // Send Message To Client 
             case 3:{
                 break;
             }

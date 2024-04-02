@@ -1,6 +1,7 @@
 #ifndef MESSAGE_200_H
 #define MESSAGE_200_H
-#include "../../gloabl.h"
+// #include "../../gloabl.h"
+#include "../../global/global.h"
 
 #include <vector>
 #include <string>

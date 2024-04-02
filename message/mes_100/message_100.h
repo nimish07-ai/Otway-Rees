@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "../../gloabl.h"
+#include "../../global/global.h"
 
 // extern  std::string clientName;
 // extern DisplayText myDisplayText;

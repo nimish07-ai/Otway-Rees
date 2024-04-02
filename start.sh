@@ -23,11 +23,15 @@ function loading_animation() {
 
 # Array to store the list of source files
 source_files=(
+    "global/global.cpp"
+    "sharedmaps/sharedmaps.cpp"
+    "sharedmaps/shared_maps_methods.cpp"
     "Csocket/Csocket.cpp"
     "displayFunctions/displayFunctions.cpp"
     "logger/logger.cpp"
     "message/diffiehelman/diffiehelman.cpp"
     "message/encryption_algorithm/encryption_algorithm.cpp"
+    "message/main_message.cpp"
     "message/mes_100/message_100.cpp"
     "message/mes_200/message_200.cpp"
     "message/mes_300/message_300.cpp"
