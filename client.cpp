@@ -84,7 +84,7 @@ int main() {
     std::cout << "Enter the port number: ";
     std::cin >> serverPort;
 
-    myDisplayText.title = "Otway-Rees(KDC application)";
+    myDisplayText.title = "Otway-Rees(Clinet application)";
     myDisplayText.notification = "0";
     myDisplayText.header = "KDC Name: " + clientName + "\nip-address: " + serverIpAddress + "\nport No: " + std::to_string(serverPort);
     myDisplayText.body = "Body: This is the body. Line 1.\nLine 2.\nLine 3.\nLine 4.\nLine 5.\nLine 6.\nLine 7.\nLine 8.\nLine 9.";

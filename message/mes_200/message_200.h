@@ -8,6 +8,6 @@
 
 
 // Function declaration for processMessage_500s
-std::pair<std::vector<std::string>, std::string> processMessage_200s(std::vector<std::string>& header, std::vector<std::vector<std::string>>& body, int messageCode);
+std::pair<std::vector<std::string>, std::string> processMessage_200s(std::vector<std::vector<std::string>>& header, std::vector<std::vector<std::string>>& body, int messageCode);
 
 #endif // MESSAGE_500_H

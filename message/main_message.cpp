@@ -33,14 +33,14 @@ std::pair<std::vector<std::string>, std::string> processMessage(const std::strin
 
             // Call appropriate function based on message code range
             if (messageCodeInt >= 100 && messageCodeInt < 200) {
-                return processMessage_100s(header[0], body,messageCodeInt);
+                return processMessage_100s(header, body,messageCodeInt);
             } 
             else if (messageCodeInt >= 200 && messageCodeInt < 300) {
-                return processMessage_200s(header[0], body,messageCodeInt);
+                return processMessage_200s(header, body,messageCodeInt);
             } else if (messageCodeInt >= 300 && messageCodeInt < 400) {
-                return processMessage_300s(header[0], body,messageCodeInt);
+                return processMessage_300s(header, body,messageCodeInt);
             } else if (messageCodeInt >= 400 && messageCodeInt < 500) {
-                return processMessage_400s( header[0], body, messageCodeInt );
+                return processMessage_400s( header, body, messageCodeInt );
             } 
             else {
                 // return 300

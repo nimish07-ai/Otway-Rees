@@ -31,11 +31,27 @@ std::pair<std::vector<std::string>, std::string> send_400(const std::string& sen
     return result;
 }
 
-std::pair<std::vector<std::string>,std::string> recv_400(const std::vector<std::string>& head, const std::vector<std::vector<std::string>>& body) {
+std::pair<std::vector<std::string>,std::string> recv_400(const std::vector<std::vector<std::string>>& head, const std::vector<std::vector<std::string>>& body) {
     std::pair<std::vector<std::string>,std::string > result;
 
-    cout<<"recieived 100";
-    // result=send_101(head[2], head[3], head[0], head[1], clientName , keysize);
+    cout<<"recieived 400";
+    
+    for (const auto& row : head) {
+        for (const auto& cell : row) {
+            // Process each cell in the header
+            std::cout << "Header  " << cell << std::endl;
+        }
+    }
+
+    
+    for (const auto& row : body) {
+        for (const auto& cell : row) {
+            // Process each cell in the body
+            std::cout << "Body  " << cell << std::endl;
+        }
+    }
+    
+
 
     return result;
 }
@@ -46,11 +62,11 @@ std::pair<std::vector<std::string>, std::string> send_401(const std::string& sen
     return result;
 }
 
-std::pair<std::vector<std::string>,std::string> recv_401(const std::vector<std::string>& head, const std::vector<std::vector<std::string>>& body) {
+std::pair<std::vector<std::string>,std::string> recv_401(const std::vector<std::vector<std::string>>& head, const std::vector<std::vector<std::string>>& body) {
     std::pair<std::vector<std::string>,std::string > result;
 
     cout<<"recieived 100";
-    // result=send_101(head[2], head[3], head[0], head[1], clientName , keysize);
+
 
     return result;
 }
@@ -59,15 +75,15 @@ std::pair<std::vector<std::string>,std::string> recv_401(const std::vector<std::
 
 
 
-std::pair<std::vector<std::string>,std::string> processMessage_400s(std::vector<std::string>& header, std::vector<std::vector<std::string>>& body, int messageCode) {
+std::pair<std::vector<std::string>,std::string> processMessage_400s(std::vector<std::vector<std::string>>& header, std::vector<std::vector<std::string>>& body, int messageCode) {
 
     // Call the appropriate send function based on the message code
     if (messageCode == 400) {
-        // Call send_100
+        // Call send_400
         return recv_400(header,body);
     }
     else if (messageCode == 401) {
-        // Call send_100
+        // Call send_401
         return recv_401(header,body);
     }
     else {
