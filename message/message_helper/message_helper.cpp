@@ -6,15 +6,23 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <algorithm> // for std::replace
 #include "../../global/global.h"
 
-// Function to split a string into a vector of vectors of strings based on delimiter ','
 std::vector<std::vector<std::string>> stringToArrayBase(const std::string& str) {
     std::vector<std::vector<std::string>> result;
     std::stringstream ss(str);
     std::string token;
 
-    while (std::getline(ss, token, ',')) {
+    // Replace '[' and ']' with space
+    std::string cleanedStr = str;
+    std::replace(cleanedStr.begin(), cleanedStr.end(), '[', ' ');
+    std::replace(cleanedStr.begin(), cleanedStr.end(), ']', ' ');
+
+    // Tokenize the cleaned string
+    std::stringstream cleanedSS(cleanedStr);
+
+    while (std::getline(cleanedSS, token, ',')) {
         // Remove leading and trailing whitespace and quotes
         token.erase(0, token.find_first_not_of(" '"));
         token.erase(token.find_last_not_of(" '") + 1);
@@ -23,6 +31,7 @@ std::vector<std::vector<std::string>> stringToArrayBase(const std::string& str) 
     
     return result;
 }
+
 
 // Function to split a string into a vector of vectors of strings based on delimiter '|'
 std::vector<std::vector<std::string>> stringToArray(const std::string& str) {

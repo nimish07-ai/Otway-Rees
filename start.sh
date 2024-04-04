@@ -52,13 +52,13 @@ pid=$!
 # Start loading animation
 loading_animation $pid
 
+# Wait for compilation to finish
+wait $pid
+
 # Check if compilation was successful
 if [ $? -eq 0 ]; then
     echo "Compilation successful. You can run the compiled code using ./$2"
-    # ./"$2"
-
+    ./"$2"
 else
     echo "Compilation failed. Please check the error messages."
 fi
-
-

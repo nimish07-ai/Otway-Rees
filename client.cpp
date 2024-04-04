@@ -75,7 +75,7 @@ void menuDrivenCallback(int sock) {
 
 // Main function
 int main() {
-    startup();
+    // startup();
     system("clear");
 
     std::cout << "Welcome! This is a client program.\n";

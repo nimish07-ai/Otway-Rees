@@ -1,8 +1,12 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <any>
+#include <thread>
+#include <chrono> // for std::chrono::seconds
 #include "shared_maps_methods.h"
-
+#include "sharedmaps.h"
+#include "../message/mes_400/message_400.h"
 
 void add_client() {
     myDisplayText.body = "in choice 1:";
@@ -89,7 +93,7 @@ void establish_session_key_with_client(int sock)
                 struct sockaddr_in clientAddr;
                 memset(&clientAddr, 0, sizeof(clientAddr));
                 clientAddr.sin_family = AF_INET;
-                clientAddr.sin_addr.s_addr = inet_addr(clientsMap[clientName].first.c_str());
+                clientAddr.sin_addr.s_addr = inet_addr(std::any_cast<std::string>(clientsMap[clientName][1]).c_str());
                 // TODO: update this to 
                 clientAddr.sin_port = htons(9134);
 
@@ -132,9 +136,16 @@ void Send_Message_To_Client(int sock) {
 
     // Print name, IP address, and port of the clients in the map
     for (const auto& client : clientsMap) {
-        std::cout << i << ". Name: " << client.first << ", IP: " << client.second.first << ", Port: " << client.second.second << std::endl;
-        i++;
+        const std::string& clientName = client.first;
+        const std::vector<std::any>& clientInfo = client.second;
+
+
+        std::cout << i << ". Name: " << std::any_cast<std::string>(client.second[0]) << ", IP: " << std::any_cast<std::string>(client.second[1]) << ", Port: " << std::any_cast<std::string>(client.second[2]) << std::endl;
+
+
+
     }
+        
 
     int clientIndex;
     std::cout << "Select a client to send message: ";
@@ -148,17 +159,24 @@ void Send_Message_To_Client(int sock) {
     std::cin.ignore();
 
     if (clientIndex <= clientsMap.size()) {
-        std::string clientName = "";
+        std::string clientName =""; // Access client name
+        std::string clientIP = ""; // Access client IP
+        std::string clientPort =""; // Access client port
+                
         int j = 1;
 
         // Find the selected client by index
         for (const auto& client : clientsMap) {
             if (j == clientIndex) {
-                clientName = client.first;
+                clientName = std::any_cast<std::string>(client.second[0]);
+                clientIP = std::any_cast<std::string>(client.second[1]);
+                clientPort = std::any_cast<std::string>(client.second[2]);
                 break;
             }
             j++;
         }
+        // cout<<clientName<<clientIP<<clientPort;
+
 
         if (!clientName.empty()) {
             int choice;
@@ -175,14 +193,19 @@ void Send_Message_To_Client(int sock) {
             if (choice == 1) {
                 // User selected plain text
                 std::cout << "Sending plain text message...\n";
-                
+
+                std::string sMessage;
+                std::cout << "Enter message to send: ";
+                std::getline(std::cin, sMessage);
+                sendMessage_preprocessor(send_400(serverIpAddress,std::to_string(serverPort),clientIP,clientPort, sMessage),sock );
+                std::this_thread::sleep_for(std::chrono::seconds(5));
+
                 // Implement logic to send plain text message
             } else if (choice == 2) {
                 // User selected encrypted text
                 if (ssk_map.find(clientName) != ssk_map.end()) {
                     // Client exists in the ssk_map
                     std::cout << "Sending encrypted message...\n";
-                    // sendMessage_preprocessor(send_400(serverIpAddress,senderport,receiverip,receiverport, message),sock );
                     // Implement logic to send encrypted message
                 } else {
                     // Client does not exist in the ssk_map

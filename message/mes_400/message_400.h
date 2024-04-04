@@ -6,7 +6,7 @@
 #include <string>
 
 
-std::pair<std::vector<std::string>, std::string> send_400(const std::string& senderip, const std::string& senderport, const std::string& receiverip, const std::string& receiverport);
+std::pair<std::vector<std::string>, std::string> send_400(const std::string& senderip, const std::string& senderport, const std::string& receiverip, const std::string& receiverport,const std::string& message);
 
 std::pair<std::vector<std::string>, std::string> send_401(const std::string& senderip, const std::string& senderport, const std::string& receiverip, const std::string& receiverport);
 

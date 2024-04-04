@@ -74,6 +74,7 @@
         "functional": "cpp",
         "memory_resource": "cpp",
         "numeric": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "any": "cpp"
     }
 }

@@ -1,25 +1,25 @@
 #include "Csocket.h" // Include your own header file
-#include <iostream> 
-#include <string> 
-#include <map> 
-#include <mutex> 
-#include <netinet/in.h> 
-#include <arpa/inet.h> 
-#include <sys/socket.h> 
-#include <cstring> 
-#include <condition_variable>
-#include <vector> 
-#include <unistd.h> 
-#include <thread> 
-#include <sstream> 
-#include <iomanip>
-#include <random>
-#include <chrono>
-#include <ctime>
-#include <iomanip>
-
+#include <iostream>
+#include <string>
+#include <thread>
+#include <arpa/inet.h>
+#include <vector>
+#include <cstring>
+#include <unistd.h>
+#include <map>
+#include <mutex> // For mutex
+#include <iostream>   // For std::cerr
+#include <string>     // For std::string
+#include <thread>     // For std::thread
+#include <arpa/inet.h> // For sockaddr_in, inet_addr, htons
+#include <cstring>     // For memset, strlen
+#include <unistd.h>    // For close
+#include <sstream>
 
 using namespace std;
+
+
+
 int createSocket(const char* ipAddress, int port) {
     int sock = socket(AF_INET, SOCK_DGRAM, 0); // Change SOCK_STREAM to SOCK_DGRAM
     if (sock == -1) {
@@ -74,15 +74,16 @@ int initializeClient(const char* serverIpAddress, int serverPort, void (*menuDri
         std::cerr << "Error: Failed to create client socket\n";
         return -1;
     }
-
-    // Start the server in a separate thread
+    cout<< clientSocket ;
     std::thread(startServer, startServerCallback, clientSocket).detach();
 
-    // Call the menu-driven callback function and pass the client socket
+
     menuDrivenCallback(clientSocket);
 
-    // Close the client socket
     close(clientSocket);
 
     return 0;
 }
+
+
+
