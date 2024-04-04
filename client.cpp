@@ -1,35 +1,11 @@
 #include "global/global.h"
 
+//function to handel request from internet
 void startServerCallback(const std::string& message, const std::string& clientAddress, int sock) {
     std::cout << "Received message from client at address: " << clientAddress << "\n";
     std::cout << "Message: " << message << std::endl;
-
-    // Process the received message
     auto processedMessage = processMessage(message);
-    std::vector<std::string> additionalData = processedMessage.first;
-    std::string sMessage = processedMessage.second;
-
-    if (!additionalData.empty()) {
-        // Extract client IP and port from the additional data
-        std::string clientIP = additionalData[0];
-        int clientPort = std::stoi(additionalData[1]); // Convert port to integer
-
-        // Create client address structure
-        struct sockaddr_in clientAddr;
-        memset(&clientAddr, 0, sizeof(clientAddr));
-        clientAddr.sin_family = AF_INET;
-        clientAddr.sin_addr.s_addr = inet_addr(clientIP.c_str());
-        clientAddr.sin_port = htons(clientPort);
-
-        // Send message to the client
-        if (sendMessage(sock, clientAddr, sMessage.c_str()) == 1) {
-            std::cout << "Message sent successfully.\n";
-        } else {
-            std::cerr << "Failed to send message.\n";
-        }
-    } else {
-        std::cerr << "Empty output from processMessage. Not sending any message.\n";
-    }
+    sendMessage_preprocessor(processedMessage, sock);
 }
 
 
@@ -53,49 +29,53 @@ void menuDrivenCallback(int sock) {
         std::cin.ignore();
 
         switch (choice) {
-            // Check Message Pool
-           case 0: {
-     
-            break;
-        }
-
-
-        // Add Client
-        case 1: {
-    
-            break;
-        }
-
-        // Establish Session Key With Client
-        case 2: {
             
-            break;
-        }
-           
-                // Send Message To Client 
-            case 3:{
+            // Check Message Pool
+            case 0: {
+                Message_Pool_check();
                 break;
             }
+
+            // Add Client
+            case 1: {
+                add_client();
+                break;
+            }
+
+            // Establish Session Key With Client
+            case 2: {
+                establish_session_key_with_client(sock);
+                break;
+            }
+            
+            // Send Message To Client 
+            case 3:{
+                Send_Message_To_Client(sock);
+                break;
+            }
+            
             //  Add New KDC
             case 4:{
+                add_kdc();
                 break;
             }
             // Establish SSK With KDC
-            case 5:{break;}
+            case 5:{
+                Establish_SSK_With_KDC();
+                break;}
             case 6:
                 return;
 
             default:
                 std::cout << "Invalid choice. Please try again.\n";
         }
+
     }
 }
 
 // Main function
 int main() {
     startup();
-    const char* serverIpAddress = "127.0.0.1";
-    int serverPort;
     system("clear");
 
     std::cout << "Welcome! This is a client program.\n";

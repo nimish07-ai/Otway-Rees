@@ -16,6 +16,7 @@
 #include <unistd.h>    
 
 #include "../Csocket/Csocket.h" 
+#include "../message/message_helper/message_helper.h"
 #include "../message/main_message.h"
 #include "../displayFunctions/displayFunctions.h"
 #include "../logger/logger.h"
@@ -26,5 +27,7 @@
 extern std::string clientName;
 extern const int keysize;
 extern DisplayText myDisplayText;
+extern const char* serverIpAddress;
+extern int serverPort;
 
 #endif

@@ -35,12 +35,13 @@ source_files=(
     "message/mes_100/message_100.cpp"
     "message/mes_200/message_200.cpp"
     "message/mes_300/message_300.cpp"
+    "message/mes_400/message_400.cpp"
     "message/message_helper/message_helper.cpp"
 )
 
 # Compile the C++ program with the specified source files
 echo "Compiling with the following command:"
-echo "g++ -o $2 $1 ${source_files[@]} -lcryptopp"
+echo "g++ -o $2 $1 ${source_files[*]} -lcryptopp"
 
 # Start compilation in the background
 (g++ -o "$2" "$1" "${source_files[@]}" -lcryptopp) &
@@ -51,9 +52,13 @@ pid=$!
 # Start loading animation
 loading_animation $pid
 
-# Once the compilation is complete, execute the compiled program
-# ./"$2"
+# Check if compilation was successful
+if [ $? -eq 0 ]; then
+    echo "Compilation successful. You can run the compiled code using ./$2"
+    # ./"$2"
+
+else
+    echo "Compilation failed. Please check the error messages."
+fi
 
 
-# g++ client.cpp Csocket/Csocket.cpp displayFunctions/displayFunctions.cpp logger/logger.cpp message/diffiehelman/diffiehelman.cpp message/encryption_algorithm/encryption_algorithm.cpp message/message_helper/message_helper.cpp message/mes_100/message_100.cpp  -lcryptopp
-# g++ client.cpp Csocket/Csocket.cpp displayFunctions/displayFunctions.cpp logger/logger.cpp message/diffiehelman/diffiehelman.cpp message/diffiehelman/diffiehelman.cpp message/encryption_algorith/encryption_algorith.cpp message/mes_100/message_100.cpp message/main_message.cpp

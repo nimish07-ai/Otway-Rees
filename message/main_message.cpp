@@ -7,6 +7,7 @@
 #include "mes_100/message_100.h"
 #include "mes_200/message_200.h"
 #include "mes_300/message_300.h"
+#include "mes_400/message_400.h"
 #include "message_helper/message_helper.h"
 
 std::pair<std::vector<std::string>, std::string> processMessage(const std::string& message) {
@@ -38,7 +39,10 @@ std::pair<std::vector<std::string>, std::string> processMessage(const std::strin
                 return processMessage_200s(header[0], body,messageCodeInt);
             } else if (messageCodeInt >= 300 && messageCodeInt < 400) {
                 return processMessage_300s(header[0], body,messageCodeInt);
-            } else {
+            } else if (messageCodeInt >= 400 && messageCodeInt < 500) {
+                return processMessage_400s( header[0], body, messageCodeInt );
+            } 
+            else {
                 // return 300
                 std::cerr << "Unknown message code: " << messageCodeInt << std::endl;
             }

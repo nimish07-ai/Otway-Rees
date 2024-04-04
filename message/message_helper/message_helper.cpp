@@ -2,6 +2,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstring>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include "../../global/global.h"
 
 // Function to split a string into a vector of vectors of strings based on delimiter ','
 std::vector<std::vector<std::string>> stringToArrayBase(const std::string& str) {
@@ -111,6 +116,37 @@ std::vector<std::string> generate_head(const std::string& senderip, const std::s
     head.push_back(code);
     return head;
 }
+
+void sendMessage_preprocessor(const std::pair<std::vector<std::string>, std::string>& processedMessage,int sock)
+{
+    std::vector<std::string> additionalData = processedMessage.first;
+    std::string sMessage = processedMessage.second;
+
+    if (!additionalData.empty()) {
+        // Extract client IP and port from the additional data
+        std::string clientIP = additionalData[0];
+        int clientPort = std::stoi(additionalData[1]); // Convert port to integer
+
+        // Create client address structure
+        struct sockaddr_in clientAddr;
+        memset(&clientAddr, 0, sizeof(clientAddr));
+        clientAddr.sin_family = AF_INET;
+        clientAddr.sin_addr.s_addr = inet_addr(clientIP.c_str());
+        clientAddr.sin_port = htons(clientPort);
+
+        // Send message to the client
+        if (sendMessage(sock, clientAddr, sMessage.c_str()) == 1) {
+            std::cout << "Message sent successfully.\n";
+        } else {
+            std::cerr << "Failed to send message.\n";
+        }
+    } else {
+        std::cerr << "Empty output from processMessage. Not sending any message.\n";
+    }
+
+}
+
+
 
 // int main() {
 //     // Example usage:
